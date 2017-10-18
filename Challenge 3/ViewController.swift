@@ -50,11 +50,10 @@ class ViewController: UITableViewController {
     }
 
     func startGame(action: UIAlertAction! = nil) {
-        //clear out title for the second round
-        title?.removeAll()
         //randomize the words in the list
         allWords = GKRandomSource.sharedRandom().arrayByShufflingObjects(in: allWords) as! [String]
         wordToGuess = allWords[0]
+        print(wordToGuess)
 
         usedLetters.removeAll(keepingCapacity: true)
         tableView.reloadData()
@@ -112,18 +111,31 @@ class ViewController: UITableViewController {
             guess -= 1
             //pop up an alert if the user runs out of guesses
             if guess == 0 {
-                let ac = UIAlertController(title: title, message: "Sorry you did't guess \(wordToGuess).", preferredStyle: .alert)
+                let ac = UIAlertController(title: "Sorry you lost", message: "You did't guess \(wordToGuess).", preferredStyle: .alert)
                 ac.addAction(UIAlertAction(title: "Continue", style: .default, handler: startGame))
                 present(ac, animated: true)
+                
+                //clear out title for the second round
+                title = ""
             }
             return false
         }
+        for _ in fakeWordArray {
+            if fakeWordArray.index(of: "*") == nil {
+                //Congratulate the user
+                let ac = UIAlertController(title: "Good job you win", message: "You guessed \(wordToGuess) correctly.", preferredStyle: .alert)
+                ac.addAction(UIAlertAction(title: "Continue", style: .default, handler: startGame))
+                present(ac, animated: true)
+                
+                 //clear out title for the second round
+                title = ""
+            }
+        }
         return true
     }
-   
-    
+
     @objc func promptForAnswer() {
-        let ac = UIAlertController(title: "Enter answer", message: nil, preferredStyle: .alert)
+        let ac = UIAlertController(title: "Enter letter", message: nil, preferredStyle: .alert)
         ac.addTextField()
         
         let submitAction = UIAlertAction(title: "Submit", style: .default) { [unowned self, ac] (action: UIAlertAction) in
@@ -147,7 +159,5 @@ class ViewController: UITableViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-
 }
 
